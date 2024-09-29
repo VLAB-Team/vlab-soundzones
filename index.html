@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+</head>
+<body>
+    <audio id="musicPlayer" type="audio/mpeg" loop preload="auto" volume="1.0"></audio>
+
+    <script>
+        window.addEventListener('message', function(event) {
+            var data = event.data;
+            var audio = document.getElementById("musicPlayer");
+
+            if (data.type === "playMusic") {
+                audio.src = `nui://vlab-soundzones/sounds/${data.file}?v=${new Date().getTime()}`;
+                audio.volume = data.volume || 0.05;
+                audio.load();
+                setTimeout(function() {
+                    audio.play().then(() => {
+                    }).catch(function(error) {
+                    });
+                }, 500);
+            } else if (data.type === "stopMusic") {
+                audio.pause();
+                audio.currentTime = 0;
+                audio.src = "";
+            }
+        });
+    </script>
+</body>
+</html>
