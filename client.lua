@@ -77,37 +77,36 @@ end)
 
 local soundEnabled = false
 
-RegisterCommand('soundoff', function()
+RegisterCommand('soundon', function()
     if not soundEnabled then
-        soundEnabled = false
+        soundEnabled = true
         print("Musica abilitata.")
         TriggerEvent('vlab-soundzones:toggleSound', true)
     else
-        print("La musica è stata disabilitata.")
+        print("La musica è già abilitata.")
     end
 end, false)
 
-RegisterCommand('soundon', function()
+RegisterCommand('soundoff', function()
     if soundEnabled then
-        soundEnabled = true
-        TriggerEvent('vlab-soundzones:playMusic', fileName, 0.05)
+        soundEnabled = false
+        print("Musica disabilitata.")
+        TriggerEvent('vlab-soundzones:toggleSound', false)
     else
-        print("Hai abilitato la musica.")
+        print("La musica è già disabilitata.")
     end
 end, false)
 
 RegisterNetEvent('vlab-soundzones:toggleSound')
 AddEventHandler('vlab-soundzones:toggleSound', function(enable)
     if enable then
-        
         SendNUIMessage({
             type = "playMusic",
-            file = fileName,
-            volume = volume or 0.05
+            file = "music.mp3",
+            volume = 0.5
         })
         print("Riproduzione della musica avviata.")
     else
-
         SendNUIMessage({
             type = "stopMusic"
         })
