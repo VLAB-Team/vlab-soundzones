@@ -6,26 +6,39 @@
     <title>Music Player</title>
 </head>
 <body>
-    <audio id="musicPlayer" type="audio/mpeg" loop preload="auto" volume="1.0"></audio>
+    <audio id="musicPlayer" type="audio/mpeg" loop></audio>
 
     <script>
+        var audio = document.getElementById("musicPlayer");
+        var fadeInterval;
+
+        
+        function fadeOutAudio() {
+            if (!audio) return;
+            clearInterval(fadeInterval);
+            fadeInterval = setInterval(function() {
+                if (audio.volume > 0.05) {
+                    audio.volume -= 0.05;
+                } else {
+                    audio.volume = 0;
+                    audio.pause();
+                    audio.src = "";
+                    clearInterval(fadeInterval);
+                }
+            }, 500);
+        }
+
         window.addEventListener('message', function(event) {
             var data = event.data;
-            var audio = document.getElementById("musicPlayer");
 
             if (data.type === "playMusic") {
-                audio.src = `nui://vlab-soundzones/sounds/${data.file}?v=${new Date().getTime()}`;
-                audio.volume = data.volume || 0.05;
-                audio.load();
-                setTimeout(function() {
-                    audio.play().then(() => {
-                    }).catch(function(error) {
-                    });
-                }, 500);
+                audio.src = "nui://vlab-soundzones/sounds/" + data.file + "?v=" + new Date().getTime();
+                audio.volume = 0.5;
+                audio.play().catch(function(error) {
+                    console.error("Errore durante la riproduzione dell'audio:", error);
+                });
             } else if (data.type === "stopMusic") {
-                audio.pause();
-                audio.currentTime = 0;
-                audio.src = "";
+                fadeOutAudio();
             }
         });
     </script>
